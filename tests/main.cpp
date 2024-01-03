@@ -17,7 +17,8 @@ int main()
 	stream >> doc;
 
 	// Get hostname
-	auto db =  doc["database"]["host"];
+	auto port = std::get<int>(doc["database"]["port"]);
+	auto host =  std::get<std::string>(doc["database"]["host"]);
 
 	// Iterate all sections
 	for (const auto& s : doc)
@@ -25,7 +26,12 @@ int main()
 		std::cout << "Section name: " << s.first << std::endl;
 		for (const auto& pair : s.second)
 		{
-			std::cout << "Var --> " << pair.first << " : " << pair.second << std::endl;
+			std::cout << "Var --> " << pair.first << " : ";
+
+			// Visit the value with auto
+			std::visit([](auto&& arg) { std::cout << arg; }, pair.second); 
+			
+			std::cout << std::endl;
 		}
 	} 
 

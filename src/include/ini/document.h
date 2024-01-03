@@ -5,85 +5,27 @@
 #include <set>
 #include <string>
 #include <sstream>
+#include <variant>
+
 
 namespace ini
 {
-	using section = std::map<std::string, std::string>;
+	using value = std::variant<int, float, bool, std::string>;
+	using section = std::map<std::string, value>;
 
 	class document
 	{
 	public:
+		bool parse(const std::vector<char>& data);
 
-		bool parse(const std::vector<char>& data)
-		{
-			std::string section_name, var_name, var_value;
-			section s;
-			std::string* pCurrent = &var_name;
+		section operator[](const std::string& sKey);
+		section at(const std::string& sKey) const;
 
-			const std::set<char> ignore = {};
+		std::map<std::string, section>::iterator begin();
+		std::map<std::string, section>::iterator end();
 
-			bool stringOpen = false;
-
-			for (const auto c : data)
-			{
-				if (ignore.count(c))
-					continue;
-
-				if (c == '[')
-				{
-					// Open new section
-					section_name.clear();
-
-					// Write to section name
-					pCurrent = &section_name;
-				}
-				else if (c == ']')
-				{
-					// Close section
-					m_sections[section_name] = s;
-
-					var_name.clear();
-					pCurrent = &var_name;
-				}
-				else if (c == '=')
-				{
-					var_value.clear();
-					pCurrent = &var_value;
-				}
-				else if (c == '\n')
-				{
-					// Add value to the map
-					if (!var_name.empty())
-						m_sections[section_name][var_name] = var_value;
-
-					// Clear and point to var name
-					var_value.clear();
-					var_name.clear();
-
-					pCurrent = &var_name;
-				}
-				else if (c == '"')
-				{
-					stringOpen = !stringOpen;
-				}
-				else
-				{
-					if(!(pCurrent->empty() && c == ' ') || stringOpen)
-						pCurrent->push_back(c);
-				}
-			}
-
-			return true;
-		}
-
-		section operator[](const std::string& sKey) { return m_sections[sKey]; }
-		section at(const std::string& sKey) const { return m_sections.at(sKey); }
-
-		std::map<std::string, section>::iterator begin() { return m_sections.begin(); }
-		std::map<std::string, section>::iterator end() { return m_sections.end(); }
-
-		std::map<std::string, section>::const_iterator begin() const { return m_sections.begin(); }
-		std::map<std::string, section>::const_iterator end() const { return m_sections.end(); }
+		std::map<std::string, section>::const_iterator begin() const;
+		std::map<std::string, section>::const_iterator end() const;
 
 	private:
 		std::map<std::string, section> m_sections;
@@ -93,20 +35,9 @@ namespace ini
 
 	namespace impl 
 	{
-		std::vector<char> readStreamToVector(std::istream& stream) {
-			// Create an empty vector
-			std::vector<char> data;
-
-			// Use istreambuf_iterator to read the stream from the beginning (streambuf())
-			// to the end of the stream and back-insert into the vector.
-			std::copy(std::istreambuf_iterator<char>(stream),
-				std::istreambuf_iterator<char>(),
-				std::back_inserter(data));
-
-			return data;
-		}
+		std::vector<char> readStreamToVector(std::istream& stream);
+		value getValue(const std::string& str);
 	}
-
 }
 
 
