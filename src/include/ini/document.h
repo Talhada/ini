@@ -68,7 +68,13 @@ namespace ini
 		}
 
 		section operator[](const std::string& sKey) { return m_sections[sKey]; }
+		section at(const std::string& sKey) const { return m_sections.at(sKey); }
 
+		std::map<std::string, section>::iterator begin() { return m_sections.begin(); }
+		std::map<std::string, section>::iterator end() { return m_sections.end(); }
+
+		std::map<std::string, section>::const_iterator begin() const { return m_sections.begin(); }
+		std::map<std::string, section>::const_iterator end() const { return m_sections.end(); }
 
 	private:
 		std::map<std::string, section> m_sections;
