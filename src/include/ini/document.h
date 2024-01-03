@@ -20,7 +20,9 @@ namespace ini
 			section s;
 			std::string* pCurrent = &var_name;
 
-			const std::set<char> ignore = {'\r', ' '};
+			const std::set<char> ignore = {};
+
+			bool stringOpen = false;
 
 			for (const auto c : data)
 			{
@@ -50,17 +52,24 @@ namespace ini
 				}
 				else if (c == '\n')
 				{
+					// Add value to the map
 					if (!var_name.empty())
 						m_sections[section_name][var_name] = var_value;
 
+					// Clear and point to var name
 					var_value.clear();
 					var_name.clear();
 
 					pCurrent = &var_name;
 				}
+				else if (c == '"')
+				{
+					stringOpen = !stringOpen;
+				}
 				else
 				{
-					pCurrent->push_back(c);
+					if(!(pCurrent->empty() && c == ' ') || stringOpen)
+						pCurrent->push_back(c);
 				}
 			}
 

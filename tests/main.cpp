@@ -19,7 +19,6 @@ int main()
 	// Get hostname
 	auto db =  doc["database"]["host"];
 
-
 	// Iterate all sections
 	for (const auto& s : doc)
 	{
@@ -28,7 +27,7 @@ int main()
 		{
 			std::cout << "Var --> " << pair.first << " : " << pair.second << std::endl;
 		}
-	}
+	} 
 
 	return 0;
 }
