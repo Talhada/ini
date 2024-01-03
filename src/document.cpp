@@ -8,15 +8,11 @@ namespace ini
 		section s;
 		std::string* pCurrent = &var_name;
 
-		const std::set<char> ignore = {};
-
 		bool stringOpen = false;
+		bool isComment = false;
 
 		for (const auto c : data)
 		{
-			if (ignore.count(c))
-				continue;
-
 			if (c == '[')
 			{
 				// Open new section
@@ -53,15 +49,25 @@ namespace ini
 				var_name.clear();
 
 				pCurrent = &var_name;
+
+				// Must reset comment state
+				isComment = false;
 			}
 			else if (c == '"')
 			{
 				stringOpen = !stringOpen;
 			}
+			else if (c == ';')
+			{
+				isComment = true;
+			}
 			else
 			{
-				if (!(pCurrent->empty() && c == ' ') || stringOpen)
-					pCurrent->push_back(c);
+				if (!isComment)
+				{
+					if (!(pCurrent->empty() && c == ' ') || stringOpen)
+						pCurrent->push_back(c);
+				}
 			}
 		}
 
