@@ -84,12 +84,12 @@ namespace ini
 		return m_sections[sKey];
 	}
 
-	std::map<std::string, ini::section>::const_iterator document::end() const
+	document::sections::const_iterator document::end() const
 	{
 		return m_sections.end();
 	}
 
-	std::map<std::string, section>::iterator document::end()
+	document::sections::iterator document::end()
 	{
 		return m_sections.end();
 	}
@@ -99,12 +99,12 @@ namespace ini
 		return m_sections.at(sKey);
 	}
 
-	std::map<std::string, ini::section>::const_iterator document::begin() const
+	document::sections::const_iterator document::begin() const
 	{
 		return m_sections.begin();
 	}
 
-	std::map<std::string, section>::iterator document::begin()
+	document::sections::iterator document::begin()
 	{
 		return m_sections.begin();
 	}

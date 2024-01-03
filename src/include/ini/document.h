@@ -21,14 +21,16 @@ namespace ini
 		section operator[](const std::string& sKey);
 		section at(const std::string& sKey) const;
 
-		std::map<std::string, section>::iterator begin();
-		std::map<std::string, section>::iterator end();
+		using sections = std::map<std::string, section>;
 
-		std::map<std::string, section>::const_iterator begin() const;
-		std::map<std::string, section>::const_iterator end() const;
+		sections::iterator begin();
+		sections::iterator end();
+
+		sections::const_iterator begin() const;
+		sections::const_iterator end() const;
 
 	private:
-		std::map<std::string, section> m_sections;
+		 sections m_sections;
 	};
 
 
