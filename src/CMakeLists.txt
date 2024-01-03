@@ -6,5 +6,7 @@ include_directories("include")
 add_library(ini "include/ini/document.h" "document.cpp")
 
 # Install 
-install(TARGETS ini)
+install(TARGETS ini DESTINATION lib)
+install(FILES "include/ini/document.h" DESTINATION "include/ini")
+
   
