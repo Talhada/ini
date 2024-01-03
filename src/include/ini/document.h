@@ -8,10 +8,7 @@
 
 namespace ini
 {
-	struct section
-	{
-		std::map<std::string, std::string> values;
-	};
+	using section = std::map<std::string, std::string>;
 
 	class document
 	{
@@ -54,7 +51,7 @@ namespace ini
 				else if (c == '\n')
 				{
 					if (!var_name.empty())
-						m_sections[section_name].values[var_name] = var_value;
+						m_sections[section_name][var_name] = var_value;
 
 					var_value.clear();
 					var_name.clear();
@@ -69,6 +66,9 @@ namespace ini
 
 			return true;
 		}
+
+		section operator[](const std::string& sKey) { return m_sections[sKey]; }
+
 
 	private:
 		std::map<std::string, section> m_sections;

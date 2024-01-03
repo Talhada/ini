@@ -15,6 +15,8 @@ int main()
 	// Read and parse from stream
 	stream >> doc;
 
+	// Get hostname
+	auto db =  doc["database"]["host"];
 
 	return 0;
 }
