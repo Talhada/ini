@@ -5,5 +5,5 @@ include_directories("include")
 # Build
 add_library(ini "include/ini/document.h" "document.cpp")
 
-# Install
+# Install 
   

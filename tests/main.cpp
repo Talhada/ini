@@ -19,6 +19,7 @@ int main()
 	// Get hostname
 	auto port = std::get<int>(doc["database"]["port"]);
 	auto host =  std::get<std::string>(doc["database"]["host"]);
+	auto isAdmin = std::get<bool>(doc["user"]["isAdmin"]);
 
 	// Iterate all sections
 	for (const auto& s : doc)
