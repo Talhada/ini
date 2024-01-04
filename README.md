@@ -24,6 +24,14 @@ std::string iniContent = "your INI content here";
 doc.fromString(iniContent);
 ```
 
+Or for conveninence you can use the ">>" operator
+
+```cpp
+std::ifstream ff ("someFile.ini");
+ini::document doc;
+ff >> doc;
+```
+
 ### Accessing Data
 
 You can access the parsed data using the [] operator.
@@ -71,6 +79,16 @@ To generate INI content, use the toString method.
 
 ```cpp
 std::string iniOutput = doc.toString();
+```
+
+You can also use the "<<" operator for streams
+
+```cpp
+ini::document doc;
+doc["section"]["var"] = 3;
+
+std::fstream ff;
+ff << doc;
 ```
 
 # Installation
