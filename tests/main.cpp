@@ -16,6 +16,99 @@ TEST(IniParse, ParseGlobal)
 	EXPECT_EQ(2, value);
 }
 
+TEST(IniParse, ParseSection)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=true";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<bool>(doc["Section1"]["var"]);
+	EXPECT_TRUE(value);
+}
+
+TEST(IniParse, ParseSections)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=true\n[Section2]\nvar=false";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value1 = std::get<bool>(doc["Section1"]["var"]);
+	auto value2 = std::get<bool>(doc["Section2"]["var"]);
+	EXPECT_TRUE(value1);
+	EXPECT_FALSE(value2);
+}
+
+TEST(IniParse, ParseString)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=Some Text";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<std::string>(doc["Section1"]["var"]);
+	EXPECT_STREQ("Some Text", value.c_str());
+}
+
+TEST(IniParse, ParseQuotedString)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=\"Some Quoted Text\"";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<std::string>(doc["Section1"]["var"]);
+	EXPECT_STREQ("Some Quoted Text", value.c_str());
+}
+
+TEST(IniParse, ParseInt)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=356";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<int>(doc["Section1"]["var"]);
+	EXPECT_EQ(356, value);
+}
+
+TEST(IniParse, ParseFloat)
+{
+	std::stringstream ss;
+	ss << "[Section1]\nvar=354.36";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<double>(doc["Section1"]["var"]);
+	EXPECT_DOUBLE_EQ(354.36, value);
+}
+
+TEST(IniParse, ParseIgnoreComments)
+{
+	std::stringstream ss;
+	ss << ";This is a comment\n[Section1]\n;This is another comment\nvar=354.36";
+
+	// Parse
+	ini::document doc;
+	ss >> doc;
+
+	auto value = std::get<double>(doc["Section1"]["var"]);
+	EXPECT_DOUBLE_EQ(354.36, value);
+}
+
 //int main()
 //{
 //	std::ifstream stream("sample_1.ini"); 

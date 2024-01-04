@@ -3,6 +3,87 @@
 
 namespace ini
 {
+	namespace impl
+	{
+		std::vector<char> readStreamToVector(std::istream& stream)
+		{
+			// Create an empty vector
+			std::vector<char> data;
+
+			// Use istreambuf_iterator to read the stream from the beginning (streambuf())
+			// to the end of the stream and back-insert into the vector.
+			std::copy(std::istreambuf_iterator<char>(stream),
+				std::istreambuf_iterator<char>(),
+				std::back_inserter(data));
+
+			return data;
+		}
+
+		// Function to convert string to lowercase
+		std::string toLower(const std::string& str)
+		{
+			std::string lowerStr = str;
+			std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+			return lowerStr;
+		}
+
+		// Function to trim whitespace from both ends of a string
+		std::string trim(const std::string& str, const char c = ' ')
+		{
+			size_t first = str.find_first_not_of(c);
+			if (first == std::string::npos)
+				return ""; // No non-space characters
+
+			size_t last = str.find_last_not_of(c);
+			return str.substr(first, (last - first + 1));
+		}
+
+		bool isTrue(const std::string& str)
+		{
+			auto _str = toLower(trim(str));
+			return _str == "true";
+		}
+
+		bool isFalse(const std::string& str)
+		{
+			auto _str = toLower(trim(str));
+			return _str == "false";
+		}
+
+		ini::value getValue(const std::string& str)
+		{
+			std::istringstream iss(str);
+			int intValue;
+			double doubleValue;
+
+			// Check for integer
+			if (iss >> intValue && iss.eof())
+				return intValue;
+
+			// Reset the stream state and position
+			iss.clear();
+			iss.seekg(0, std::ios::beg);
+
+			// Check for double
+			if (iss >> doubleValue && iss.eof())
+				return doubleValue;
+
+			if (isTrue(str))
+				return true;
+
+			if (isFalse(str))
+				return false;
+
+			// If neither integer nor float, it's a string
+			return str;
+		}
+
+	}
+
+
+
+
 	bool document::parse(const std::vector<char>& data)
 	{
 		std::string section_name, var_name, var_value;
@@ -109,83 +190,11 @@ namespace ini
 		return m_sections.begin();
 	}
 
-
-
-	namespace impl
+	// Generic parsing
+	std::istream& operator>>(std::istream& stream, ini::document& doc)
 	{
-		std::vector<char> readStreamToVector(std::istream& stream)
-		{
-			// Create an empty vector
-			std::vector<char> data;
-
-			// Use istreambuf_iterator to read the stream from the beginning (streambuf())
-			// to the end of the stream and back-insert into the vector.
-			std::copy(std::istreambuf_iterator<char>(stream),
-				std::istreambuf_iterator<char>(),
-				std::back_inserter(data));
-
-			return data;
-		}
-
-		// Function to convert string to lowercase
-		std::string toLower(const std::string& str) 
-		{
-			std::string lowerStr = str;
-			std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
-				[](unsigned char c) { return std::tolower(c); });
-			return lowerStr;
-		}
-
-		// Function to trim whitespace from both ends of a string
-		std::string trim(const std::string& str, const char c=' ')
-		{
-			size_t first = str.find_first_not_of(c);
-			if (first == std::string::npos) 
-				return ""; // No non-space characters
-			
-			size_t last = str.find_last_not_of(c);
-			return str.substr(first, (last - first + 1));
-		}
-
-		bool isTrue(const std::string& str)
-		{
-			auto _str = toLower(trim(str));
-			return _str == "true";
-		}
-
-		bool isFalse(const std::string& str)
-		{
-			auto _str = toLower(trim(str));
-			return _str == "false";
-		}
-
-		ini::value getValue(const std::string& str)
-		{
-			std::istringstream iss(str);
-			int intValue;
-			float floatValue;
-
-			// Check for integer
-			if (iss >> intValue && iss.eof())
-				return intValue;
-
-			// Reset the stream state and position
-			iss.clear();
-			iss.seekg(0, std::ios::beg);
-
-			// Check for float
-			if (iss >> floatValue && iss.eof())
-				return floatValue;
-
-			if (isTrue(str))
-				return true;
-
-			if (isFalse(str))
-				return false;
-
-			// If neither integer nor float, it's a string
-			return str;
-		}
-
+		auto data = ini::impl::readStreamToVector(stream);
+		doc.parse(data);
+		return stream;
 	}
 }

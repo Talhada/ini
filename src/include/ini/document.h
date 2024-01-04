@@ -8,16 +8,15 @@
 #include <variant>
 
 
+
 namespace ini
 {
-	using value = std::variant<int, float, bool, std::string>;
+	using value = std::variant<int, double, bool, std::string>;
 	using section = std::map<std::string, value>;
 
 	class document
 	{
 	public:
-		bool parse(const std::vector<char>& data);
-
 		section operator[](const std::string& sKey);
 		section at(const std::string& sKey) const;
 
@@ -30,23 +29,12 @@ namespace ini
 		sections::const_iterator end() const;
 
 	private:
-		 sections m_sections;
+		sections m_sections;
+		bool parse(const std::vector<char>& data);
+
+		// Operators for input and output
+		friend std::istream& operator >> (std::istream& stream, ini::document& doc);
 	};
 
-
-
-	namespace impl 
-	{
-		std::vector<char> readStreamToVector(std::istream& stream);
-		value getValue(const std::string& str);
-	}
-}
-
-
-template<typename Stream>
-Stream& operator >> (Stream& stream, ini::document& doc)
-{
-	auto data = ini::impl::readStreamToVector(stream);
-	doc.parse(data);
-	return stream;
+	std::istream& operator >> (std::istream& stream, ini::document& doc);
 }
