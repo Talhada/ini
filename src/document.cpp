@@ -5,10 +5,10 @@ namespace ini
 {
 	namespace impl
 	{
-		std::vector<char> readStreamToVector(std::istream& stream)
+		std::string readStream(std::istream& stream)
 		{
 			// Create an empty vector
-			std::vector<char> data;
+			std::string data;
 
 			// Use istreambuf_iterator to read the stream from the beginning (streambuf())
 			// to the end of the stream and back-insert into the vector.
@@ -84,7 +84,7 @@ namespace ini
 
 
 
-	bool document::parse(const std::vector<char>& data)
+	bool document::fromString(const std::string& data)
 	{
 		std::string section_name, var_name, var_value;
 		section s;
@@ -160,7 +160,7 @@ namespace ini
 		return true;
 	}
 
-	ini::section document::operator[](const std::string& sKey)
+	ini::section& document::operator[](const std::string& sKey)
 	{
 		return m_sections[sKey];
 	}
@@ -175,7 +175,29 @@ namespace ini
 		return m_sections.end();
 	}
 
-	ini::section document::at(const std::string& sKey) const
+	std::string document::toString() const
+	{
+		std::ostringstream result;
+		for (const auto& pair : m_sections)
+		{
+			// Write section header
+			result << '[' << pair.first << ']';
+			result << '\n';
+
+			// Write values
+			for (const auto& val : pair.second)
+			{
+				result << val.first << '=';
+				std::visit([&result](auto&& arg) { result << arg; }, val.second);
+				result << '\n';
+			}
+			result << '\n';
+		}
+
+		return result.str();
+	}
+
+	const ini::section& document::at(const std::string& sKey) const
 	{
 		return m_sections.at(sKey);
 	}
@@ -193,8 +215,15 @@ namespace ini
 	// Generic parsing
 	std::istream& operator>>(std::istream& stream, ini::document& doc)
 	{
-		auto data = ini::impl::readStreamToVector(stream);
-		doc.parse(data);
+		auto data = ini::impl::readStream(stream);
+		doc.fromString(data);
 		return stream;
 	}
+
+	std::ostream& operator<<(std::ostream& stream, document& doc)
+	{
+		stream << doc.toString();
+		return stream;
+	}
+
 }

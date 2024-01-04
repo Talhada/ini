@@ -109,41 +109,44 @@ TEST(IniParse, ParseIgnoreComments)
 	EXPECT_DOUBLE_EQ(354.36, value);
 }
 
-//int main()
-//{
-//	std::ifstream stream("sample_1.ini"); 
-//
-//	if (stream.bad())
-//		return 1;
-//
-//	// Create document instance
-//	ini::document doc;
-//
-//	// Read and parse from stream
-//	stream >> doc;
-//
-//	// Get hostname
-//	auto port = std::get<int>(doc["database"]["port"]);
-//	auto host =  std::get<std::string>(doc["database"]["host"]);
-//	auto isAdmin = std::get<bool>(doc["user"]["isAdmin"]);
-//
-//	// Iterate all sections
-//	for (const auto& s : doc)
-//	{
-//		std::cout << "Section name: " << s.first << std::endl;
-//		for (const auto& pair : s.second)
-//		{
-//			std::cout << "Var --> " << pair.first << " : ";
-//
-//			// Visit the value with auto
-//			std::visit([](auto&& arg) { std::cout << arg; }, pair.second); 
-//			
-//			std::cout << std::endl;
-//		}
-//	}
-//
-//	return 0;
-//}
+
+
+TEST(IniToString, Convert)
+{
+	ini::document doc;
+	doc["Section1"]["StringValue"] = std::string("Some Text");
+	doc["Section1"]["IntValue"] = 123;
+	doc["Section1"]["DoubleValue"] = 5.658;
+
+	std::ostringstream os;
+	os << doc;
+	auto str = os.str();
+
+	auto pos = str.find("Section1");
+	EXPECT_GT(pos, 0);
+
+	pos = str.find("IntValue");
+	EXPECT_GT(pos, 0);
+
+	pos = str.find("StringValue");
+	EXPECT_GT(pos, 0);
+
+	pos = str.find("DoubleValue");
+	EXPECT_GT(pos, 0);
+}
+
+TEST(IniToString, ConvertBack)
+{
+	ini::document doc, doc2;
+	doc["Section1"]["StringValue"] = std::string("Some Text");
+
+	std::stringstream ss;
+	ss << doc;
+	ss >> doc2;
+
+	auto value = std::get<std::string>(doc2["Section1"]["StringValue"]);
+	EXPECT_STREQ("Some Text", value.c_str());
+}
 
 int main(int argc, char** argv) 
 {
