@@ -1,6 +1,6 @@
 # INI Document Parser and Generator
 
-[TOC]
+[![CMake on multiple platforms](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml)
 
 ## Overview
 
