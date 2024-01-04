@@ -1,10 +1,12 @@
 # INI Document Parser and Generator
 
-[![CMake on multiple platforms](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml)
 
 ## Overview
 
 This modern C++ library facilitates parsing and generating INI (Initialization File) documents. It supports reading INI files into a structured format and writing modifications back to files or strings.
+
+## Build Status
+[![CMake on multiple platforms](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml/badge.svg)](https://github.com/Talhada/ini/actions/workflows/cmake-multi-platform.yml)
 
 ## Features
 
