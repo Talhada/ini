@@ -104,3 +104,7 @@ Contributions are welcome. Please follow the standard fork, branch, and pull req
 # License
 
 Licensed under the MIT License.
+
+# About me
+
+<script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
